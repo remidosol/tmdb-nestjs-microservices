@@ -1,18 +1,18 @@
-import { Logger, ValidationPipe } from "@nestjs/common";
-import { NestFactory } from "@nestjs/core";
-import { MicroserviceOptions, Transport } from "@nestjs/microservices";
-import { NestExpressApplication, NestExpressBodyParserOptions } from "@nestjs/platform-express";
-import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import cookieParser from "cookie-parser";
-import helmet from "helmet";
-import responseTime from "response-time";
-import { AppModule } from "./app.module";
-import { ValidationErrorsInterceptor } from "./common/interceptors";
-import { ConfigService } from "./config/config.service";
-import { LoggerService } from "./logger/services";
-import { LoggerKey } from "./logger/types";
-import { Partitioners } from "kafkajs";
-import { ApiGatewayMovieService } from "./movie/movie.service";
+import { Logger, ValidationPipe } from "@nestjs/common"
+import { NestFactory } from "@nestjs/core"
+import {
+  NestExpressApplication,
+  NestExpressBodyParserOptions,
+} from "@nestjs/platform-express"
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger"
+import cookieParser from "cookie-parser"
+import helmet from "helmet"
+import responseTime from "response-time"
+import { AppModule } from "./app.module"
+import { ValidationErrorsInterceptor } from "./common/interceptors"
+import { ConfigService } from "./config/config.service"
+import { LoggerService } from "./logger/services"
+import { LoggerKey } from "./logger/types"
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -23,44 +23,34 @@ async function bootstrap() {
       credentials: true,
     },
     rawBody: true,
-  });
+  })
 
-  app.setGlobalPrefix("api");
+  app.setGlobalPrefix("api")
 
-  const configService = app.get(ConfigService);
-  const movieService = app.get(ApiGatewayMovieService);
-  const logger: LoggerService = await app.resolve(LoggerKey);
+  const configService = app.get(ConfigService)
+  const logger: LoggerService = await app.resolve(LoggerKey)
 
-  app.use(responseTime({ digits: 3, header: "X-Response-Time", suffix: true }));
+  app.use(responseTime({ digits: 3, header: "X-Response-Time", suffix: true }))
 
-  app.useGlobalInterceptors(new ValidationErrorsInterceptor());
-  app.use(helmet({ contentSecurityPolicy: configService.getOrThrow("NODE_ENV") === "production" ? undefined : false }));
-  app.use(cookieParser());
+  app.useGlobalInterceptors(new ValidationErrorsInterceptor())
+  app.use(
+    helmet({
+      contentSecurityPolicy:
+        configService.getOrThrow("NODE_ENV") === "production"
+          ? undefined
+          : false,
+    })
+  )
+  app.use(cookieParser())
 
-  app.set("trust proxy", true);
-  app.useBodyParser("json", { limit: "5mb" } as NestExpressBodyParserOptions);
+  app.set("trust proxy", true)
+  app.useBodyParser("json", { limit: "5mb" } as NestExpressBodyParserOptions)
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       transform: true,
     })
-  );
-
-  // app.connectMicroservice<MicroserviceOptions>({
-  //   transport: Transport.KAFKA,
-  //   options: {
-  //     producer: { createPartitioner: Partitioners.LegacyPartitioner },
-  //     client: {
-  //       clientId: "api-gateway-client",
-  //       brokers: [configService.getOrThrow<string>("KAFKA_BROKER", "kafka:29092")],
-  //     },
-  //     consumer: {
-  //       groupId: "api-gateway-consumer",
-  //     },
-  //   },
-  // });
-
-  // await app.startAllMicroservices();
+  )
 
   const mainConf = new DocumentBuilder()
     .setTitle("TMDB NestJS Api Gateway")
@@ -75,7 +65,11 @@ async function bootstrap() {
     )
     .addCookieAuth(
       configService.getOrThrow("CSRF_COOKIE_NAME"),
-      { type: "apiKey", in: "cookie", name: configService.getOrThrow("CSRF_COOKIE_NAME") },
+      {
+        type: "apiKey",
+        in: "cookie",
+        name: configService.getOrThrow("CSRF_COOKIE_NAME"),
+      },
       configService.getOrThrow("CSRF_COOKIE_NAME")
     )
     .addApiKey(
@@ -87,32 +81,38 @@ async function bootstrap() {
       },
       configService.getOrThrow("CSRF_HEADER_NAME")
     )
-    .build();
+    .build()
 
-  const mainDocument = SwaggerModule.createDocument(app, { ...mainConf });
+  const mainDocument = SwaggerModule.createDocument(app, { ...mainConf })
 
-  SwaggerModule.setup("api", app, mainDocument);
+  SwaggerModule.setup("api", app, mainDocument)
 
-  await app.listen(+configService.getOrThrow("PORT"));
+  await app.listen(+configService.getOrThrow("PORT"))
 
   logger.info(
     `Application is running on: http://${configService.getOrThrow("HOST") + ":" + configService.getOrThrow("PORT")}`
-  );
+  )
 
   logger.info(
     `Swagger is running on: http://${
-      configService.getOrThrow("HOST") + ":" + configService.getOrThrow("PORT") + "/api"
+      configService.getOrThrow("HOST") +
+      ":" +
+      configService.getOrThrow("PORT") +
+      "/api"
     }`
-  );
+  )
 
   logger.info(
     `GraphQL Playground is running on: http://${
-      configService.getOrThrow("HOST") + ":" + configService.getOrThrow("PORT") + "/graphql"
+      configService.getOrThrow("HOST") +
+      ":" +
+      configService.getOrThrow("PORT") +
+      "/graphql"
     }`
-  );
+  )
 }
 
 bootstrap().catch((error) => {
-  new Logger("API_GATEWAY").error(error.message, error);
-  process.exit(1);
-});
+  new Logger("API_GATEWAY").error(error.message, error)
+  process.exit(1)
+})
