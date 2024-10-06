@@ -1,0 +1,165 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    volumes:
+      - database:/data/db
+    ports:
+      - 27018:27017
+    networks:
+      - tmdb-network
+    restart: always
+
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    container_name: zookeeper
+    restart: unless-stopped
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: yes
+      ZOO_AUTOPURGE_INTERVAL: "0"
+      ZOO_MAX_SESSION_TIMEOUT: "6000"
+    ports:
+      - 2181:2181
+    networks:
+      - tmdb-network
+
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: kafka
+    restart: unless-stopped
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_CFG_BROKER_ID: 1
+      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CFG_LISTENERS: "INTERNAL://:29092,EXTERNAL://:9092"
+      ALLOW_PLAINTEXT_LISTENER: yes
+      KAFKA_CFG_ADVERTISED_LISTENERS: "INTERNAL://kafka:29092,EXTERNAL://localhost:9092"
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+    networks:
+      - tmdb-network
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop:latest
+    container_name: kafdrop
+    restart: unless-stopped
+    depends_on:
+      - kafka
+    ports:
+      - 9000:9000
+    environment:
+      KAFKA_BROKERCONNECT: "kafka:29092"
+    command: []
+    networks:
+      - tmdb-network
+
+  movie_service:
+    build:
+      context: ./tmdb-nestjs-microservices/movie-service/
+      dockerfile: Dockerfile
+    container_name: movie_service
+    ports:
+      - 3001:3001
+    env_file:
+      - ./tmdb-nestjs-microservices/movie-service/.env
+    environment:
+      HOST: localhost
+      PORT: "3001"
+      KAFKA_BROKER: "kafka:29092"
+      HOST_BASE_URL: "http://localhost:3001"
+      DOCKER_HOST_BASE_URL: "http://movie_service:3001"
+      NODE_ENV: development
+      DEBUG: "true"
+      APP_NAME: "Nest Movie Service"
+    command: yarn start:dev
+    depends_on:
+      - mongodb
+      - kafka
+    networks:
+      - tmdb-network
+    volumes:
+      - ./tmdb-nestjs-microservices/movie-service/:/app/
+      - movie_service_node_modules:/app/node_modules
+    restart: unless-stopped
+
+  tmdb_api_service:
+    build:
+      context: ./tmdb-nestjs-microservices/tmdb-api-service/
+      dockerfile: Dockerfile
+    container_name: tmdb_api_service
+    env_file:
+      - ./tmdb-nestjs-microservices/tmdb-api-service/.env
+    ports:
+      - 3002:3002
+    environment:
+      HOST: localhost
+      PORT: "3002"
+      KAFKA_BROKER: "kafka:29092"
+      HOST_BASE_URL: "http://localhost:3002"
+      DOCKER_HOST_BASE_URL: "http://tmdb_api_service:3002"
+      NODE_ENV: development
+      DEBUG: "true"
+      APP_NAME: "TMDB API Service"
+      TMDB_BASE_URL: "https://api.themoviedb.org/3"
+    command: yarn start:dev
+    depends_on:
+      - kafka
+    volumes:
+      - ./tmdb-nestjs-microservices/tmdb-api-service/:/app/
+      - tmdb_service_node_modules:/app/node_modules
+    networks:
+      - tmdb-network
+    restart: unless-stopped
+
+  api_gateway:
+    build:
+      context: ./tmdb-nestjs-microservices/api-gateway/
+      dockerfile: Dockerfile
+    container_name: api_gateway
+    ports:
+      - 3000:3000
+    environment:
+      HOST: localhost
+      PORT: "3000"
+      MOVIE_SERVICE_PORT: "3001"
+      TMDB_API_SERVICE_PORT: "3002"
+      KAFKA_BROKER: "kafka:29092"
+      HOST_BASE_URL: "http://localhost:3000"
+      DOCKER_HOST_BASE_URL: "http://api_gateway:3000"
+      NODE_ENV: development
+      DEBUG: "true"
+      APP_NAME: "Nest API Gateway"
+      CSRF_COOKIE_NAME: "__csrf"
+      CSRF_HEADER_NAME: "x-tmdb-nestjs-csrf"
+      DEFAULT_THROTTLE_TTL: "60000" # 60 sec
+      DEFAULT_THROTTLE_LIMIT: "250"
+      POST_PATCH_THROTTLE_TTL: "30000" # 30 sec
+      POST_PATCH_THROTTLE_LIMIT: "20"
+    command: yarn start:dev
+    depends_on:
+      - kafka
+      - movie_service
+      - tmdb_api_service
+    volumes:
+      - ./tmdb-nestjs-microservices/api-gateway/:/app/
+      - api_gateway_node_modules:/app/node_modules
+    networks:
+      - tmdb-network
+    restart: unless-stopped
+
+networks:
+  tmdb-network:
+    driver: bridge
+
+volumes:
+  database:
+  movie_service_node_modules:
+  tmdb_service_node_modules:
+  api_gateway_node_modules:
+
+
