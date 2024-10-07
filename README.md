@@ -42,7 +42,7 @@ The project aims to provide a scalable and maintainable backend architecture sui
 
 ## Architecture
 
-![Architecture Diagram](https://github.com/user-attachments/assets/f0b03f5b-3334-4038-ae10-45984c33870a)
+![Architecture Diagram](./docs/architecture-diagram.png)
 
 - **API Gateway**: Serves as the single entry point for clients, handling authentication, authorization, and request routing to the appropriate microservices.
 - **Movie Service**: Manages movie data, including CRUD operations and data persistence in MongoDB.
