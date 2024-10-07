@@ -556,7 +556,8 @@ Each service has the following scripts defined in its `package.json`:
 - **`start`**: Runs the service in production mode.
 - **`start:dev`**: Runs the service in development mode with hot reloading.
 - **`build`**: Compiles the TypeScript code.
-- **`lint`**: Runs the linter.
+- **`format`**: Runs the formatter (Prettier).
+- **`lint`**: Runs the linter (ESLint).
 - **`test`**: Runs the test suite.
 
 ---
