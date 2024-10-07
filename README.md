@@ -27,7 +27,6 @@ Welcome to the **TMDB NestJS Microservices Project**! This project is a microser
   - [Project Structure](#project-structure)
   - [Scripts](#scripts)
 - [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
 - [License](#license)
 - [Acknowledgments](#acknowledgments)
 
@@ -43,7 +42,7 @@ The project aims to provide a scalable and maintainable backend architecture sui
 
 ## Architecture
 
-![Architecture Diagram](./docs/architecture-diagram.png)
+![Architecture Diagram](https://github.com/user-attachments/assets/a0777758-c6ac-42d1-abea-e47cf9fc104a)
 
 - **API Gateway**: Serves as the single entry point for clients, handling authentication, authorization, and request routing to the appropriate microservices.
 - **Movie Service**: Manages movie data, including CRUD operations and data persistence in MongoDB.
