@@ -1,4 +1,10 @@
-import { PipeTransform, Injectable, ArgumentMetadata, HttpException, HttpStatus } from "@nestjs/common";
+import {
+  PipeTransform,
+  Injectable,
+  ArgumentMetadata,
+  HttpException,
+  HttpStatus,
+} from "@nestjs/common";
 import { isMongoId } from "class-validator";
 
 /**
@@ -19,14 +25,18 @@ export class GlobalMongoIdValidator {
 
 @Injectable()
 export class MongoIdValidationPipe implements PipeTransform<string> {
-  protected exceptionThrower: (error: string, status: HttpStatus) => HttpException;
+  protected exceptionThrower: (
+    error: string,
+    status: HttpStatus,
+  ) => HttpException;
 
   private isRequired: boolean;
 
   private readonly validator: GlobalMongoIdValidator;
 
   constructor(isRequired = false) {
-    this.exceptionThrower = (error: string, status: HttpStatus) => new HttpException(error, status);
+    this.exceptionThrower = (error: string, status: HttpStatus) =>
+      new HttpException(error, status);
 
     this.validator = new GlobalMongoIdValidator();
     this.isRequired = isRequired;

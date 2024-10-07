@@ -9,7 +9,9 @@ describe("ApiGatewayMovieController", () => {
       controllers: [ApiGatewayMovieController],
     }).compile();
 
-    controller = module.get<ApiGatewayMovieController>(ApiGatewayMovieController);
+    controller = module.get<ApiGatewayMovieController>(
+      ApiGatewayMovieController,
+    );
   });
 
   it("should be defined", () => {

@@ -13,20 +13,25 @@ async function bootstrap() {
   const configService = appContext.get(ConfigService);
   const logger = await appContext.resolve(LoggerKey);
 
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
-    transport: Transport.KAFKA,
-    options: {
-      producer: { createPartitioner: Partitioners.LegacyPartitioner },
-      client: {
-        clientId: "tmdb-api-service",
-        brokers: [configService.getOrThrow<string>("KAFKA_BROKER", "kafka:29092")],
-        // logLevel: logLevel.DEBUG,
-      },
-      consumer: {
-        groupId: "tmdb-api-service-consumer",
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+    AppModule,
+    {
+      transport: Transport.KAFKA,
+      options: {
+        producer: { createPartitioner: Partitioners.LegacyPartitioner },
+        client: {
+          clientId: "tmdb-api-service",
+          brokers: [
+            configService.getOrThrow<string>("KAFKA_BROKER", "kafka:29092"),
+          ],
+          // logLevel: logLevel.DEBUG,
+        },
+        consumer: {
+          groupId: "tmdb-api-service-consumer",
+        },
       },
     },
-  });
+  );
 
   await app.listen();
 

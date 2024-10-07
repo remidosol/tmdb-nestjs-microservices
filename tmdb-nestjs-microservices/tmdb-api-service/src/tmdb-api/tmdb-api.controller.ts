@@ -1,7 +1,11 @@
 import { Controller, Inject, UseInterceptors } from "@nestjs/common";
 import { TmdbApiService } from "./tmdb-api.service";
 import { Ctx, KafkaContext, MessagePattern } from "@nestjs/microservices";
-import { TmdbDiscoverMovieRequest, TmdbDiscoverMovieResponse, TmdbMovieDetailResponse } from "../types";
+import {
+  TmdbDiscoverMovieRequest,
+  TmdbDiscoverMovieResponse,
+  TmdbMovieDetailResponse,
+} from "../types";
 import { LoggerService } from "../logger/services";
 import { LoggerKey } from "../logger/types";
 import { TransformResponseInterceptor } from "../common";
@@ -10,14 +14,16 @@ import { TransformResponseInterceptor } from "../common";
 export class TmdbApiController {
   constructor(
     private readonly tmdbApiService: TmdbApiService,
-    @Inject(LoggerKey) private logger: LoggerService
+    @Inject(LoggerKey) private logger: LoggerService,
   ) {
     this.logger.setOrganizationAndContext(TmdbApiController.name);
   }
 
   @MessagePattern("discoverMovies")
   @UseInterceptors(TransformResponseInterceptor(Object))
-  async discoverMovies(@Ctx() ctx: KafkaContext): Promise<TmdbDiscoverMovieResponse | null> {
+  async discoverMovies(
+    @Ctx() ctx: KafkaContext,
+  ): Promise<TmdbDiscoverMovieResponse | null> {
     try {
       const params: TmdbDiscoverMovieRequest = ctx.getMessage().value as any;
       // console.log("discoverMovies", ctx.getMessage());
@@ -33,7 +39,9 @@ export class TmdbApiController {
 
   @MessagePattern("getMovieDetails")
   @UseInterceptors(TransformResponseInterceptor(Object))
-  async getMovieDetails(@Ctx() ctx: KafkaContext): Promise<TmdbMovieDetailResponse | null> {
+  async getMovieDetails(
+    @Ctx() ctx: KafkaContext,
+  ): Promise<TmdbMovieDetailResponse | null> {
     try {
       const movieId: string = ctx.getMessage().value as any;
 

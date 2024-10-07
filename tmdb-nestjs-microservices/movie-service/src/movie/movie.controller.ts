@@ -20,7 +20,9 @@ export class MovieController {
     // console.log("orderBy", ctx.getMessage().value);
 
     return this.movieService.getMovies(
-      orderBy?.field && orderBy?.order ? { [orderBy.field]: orderBy.order === "asc" ? 1 : -1 } : undefined
+      orderBy?.field && orderBy?.order
+        ? { [orderBy.field]: orderBy.order === "asc" ? 1 : -1 }
+        : undefined,
     );
   }
 

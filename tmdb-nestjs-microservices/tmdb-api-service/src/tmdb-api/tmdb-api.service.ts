@@ -2,7 +2,11 @@ import { Inject, Injectable, Logger } from "@nestjs/common";
 import axios, { AxiosInstance } from "axios";
 import * as https from "https";
 import { ConfigService } from "../config/config.service";
-import { TmdbDiscoverMovieRequest, TmdbDiscoverMovieResponse, TmdbMovieDetailResponse } from "../types";
+import {
+  TmdbDiscoverMovieRequest,
+  TmdbDiscoverMovieResponse,
+  TmdbMovieDetailResponse,
+} from "../types";
 import { LoggerService } from "../logger/services";
 import { LoggerKey } from "../logger/types";
 
@@ -12,7 +16,7 @@ export class TmdbApiService {
 
   constructor(
     private readonly configService: ConfigService,
-    @Inject(LoggerKey) private logger: LoggerService
+    @Inject(LoggerKey) private logger: LoggerService,
   ) {
     this.logger.setOrganizationAndContext(TmdbApiService.name);
     this.axiosInstance = axios.create(
@@ -47,7 +51,7 @@ export class TmdbApiService {
                   },
                 }),
             baseURL: configService.getOrThrow("TMDB_BASE_URL"),
-          }
+          },
     );
   }
 
@@ -57,19 +61,26 @@ export class TmdbApiService {
    * @param params [`TmdbDiscoverMovieRequest`](./types/tmdb-request.types.ts)
    * @returns [`TmdbDiscoverMovieResponse`](./types/tmdb-response.types.ts)
    */
-  async discoverMovies(params: TmdbDiscoverMovieRequest): Promise<TmdbDiscoverMovieResponse | null> {
+  async discoverMovies(
+    params: TmdbDiscoverMovieRequest,
+  ): Promise<TmdbDiscoverMovieResponse | null> {
     try {
       // console.log(params);
 
-      const response = await this.axiosInstance.get<TmdbDiscoverMovieResponse>("/discover/movie", {
-        params,
-      });
+      const response = await this.axiosInstance.get<TmdbDiscoverMovieResponse>(
+        "/discover/movie",
+        {
+          params,
+        },
+      );
 
       // console.log(response.data);
 
       return response.status === 200 ? response.data : null;
     } catch (err: any) {
-      err.status ? this.logger.info(err.message, { error: err }) : this.logger.error(err.message, { error: err });
+      err.status
+        ? this.logger.info(err.message, { error: err })
+        : this.logger.error(err.message, { error: err });
       // console.error(JSON.stringify(err.response.data, null, 2));
       return null;
     }
@@ -81,13 +92,19 @@ export class TmdbApiService {
    * @param params [`TmdbDiscoverMovieRequest`](./types/tmdb-request.types.ts)
    * @returns [`TmdbMovieDetailResponse`](./types/tmdb-response.types.ts)
    */
-  async getMovieDetails(movieId: string): Promise<TmdbMovieDetailResponse | null> {
+  async getMovieDetails(
+    movieId: string,
+  ): Promise<TmdbMovieDetailResponse | null> {
     try {
-      const response = await this.axiosInstance.get<TmdbMovieDetailResponse>(`/movie/${movieId}`);
+      const response = await this.axiosInstance.get<TmdbMovieDetailResponse>(
+        `/movie/${movieId}`,
+      );
 
       return response.status === 200 ? response.data : null;
     } catch (err: any) {
-      err.status ? this.logger.info(err.message, { error: err }) : this.logger.error(err.message, { error: err });
+      err.status
+        ? this.logger.info(err.message, { error: err })
+        : this.logger.error(err.message, { error: err });
       // console.error(JSON.stringify(err.response.data, null, 2));
       return null;
     }

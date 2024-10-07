@@ -15,7 +15,10 @@ import { BadRequestExceptionMessageKeys } from "../../common/error-message";
 
 export class GenreDto {
   @IsNotEmpty({ message: BadRequestExceptionMessageKeys.PROVIDE_ID })
-  @IsNumber({ maxDecimalPlaces: 3 }, { message: BadRequestExceptionMessageKeys.PROVIDE_NUMBER })
+  @IsNumber(
+    { maxDecimalPlaces: 3 },
+    { message: BadRequestExceptionMessageKeys.PROVIDE_NUMBER },
+  )
   @ApiProperty({
     type: Number,
     example: 55,
@@ -25,7 +28,9 @@ export class GenreDto {
 
   @IsNotEmpty({ message: BadRequestExceptionMessageKeys.PROVIDE_GENRE_NAME })
   @IsString({ message: BadRequestExceptionMessageKeys.PROVIDE_STRING })
-  @MaxLength(25, { message: BadRequestExceptionMessageKeys.GENRE_NAME_LENGTH_EXCEEDED })
+  @MaxLength(25, {
+    message: BadRequestExceptionMessageKeys.GENRE_NAME_LENGTH_EXCEEDED,
+  })
   @ApiProperty({
     type: String,
     example: "Crime",
@@ -46,7 +51,9 @@ export class CreateMovieDto {
 
   @IsNotEmpty({ message: BadRequestExceptionMessageKeys.PROVIDE_MOVIE_NAME })
   @IsString({ message: BadRequestExceptionMessageKeys.PROVIDE_STRING })
-  @MaxLength(25, { message: BadRequestExceptionMessageKeys.MOVIE_NAME_LENGTH_EXCEEDED })
+  @MaxLength(25, {
+    message: BadRequestExceptionMessageKeys.MOVIE_NAME_LENGTH_EXCEEDED,
+  })
   @ApiProperty({
     type: String,
     example: "The Godfather",
@@ -56,7 +63,9 @@ export class CreateMovieDto {
 
   @IsNotEmpty({ message: BadRequestExceptionMessageKeys.PROVIDE_OVERVIEW })
   @IsString({ message: BadRequestExceptionMessageKeys.PROVIDE_STRING })
-  @MaxLength(250, { message: BadRequestExceptionMessageKeys.OVERVIEW_LENGTH_EXCEEDED })
+  @MaxLength(250, {
+    message: BadRequestExceptionMessageKeys.OVERVIEW_LENGTH_EXCEEDED,
+  })
   @ApiProperty({
     type: String,
     example: "Overview of the movie.",
@@ -65,9 +74,16 @@ export class CreateMovieDto {
   overview!: string;
 
   @IsNotEmpty({ message: BadRequestExceptionMessageKeys.PROVIDE_POPULARITY })
-  @IsNumber({ maxDecimalPlaces: 3 }, { message: BadRequestExceptionMessageKeys.PROVIDE_NUMBER })
-  @Max(100.0, { message: BadRequestExceptionMessageKeys.POPULARITY_MAX_VALUE_EXCEEDED })
-  @Min(0.0, { message: BadRequestExceptionMessageKeys.POPULARITY_MIN_VALUE_EXCEEDED })
+  @IsNumber(
+    { maxDecimalPlaces: 3 },
+    { message: BadRequestExceptionMessageKeys.PROVIDE_NUMBER },
+  )
+  @Max(100.0, {
+    message: BadRequestExceptionMessageKeys.POPULARITY_MAX_VALUE_EXCEEDED,
+  })
+  @Min(0.0, {
+    message: BadRequestExceptionMessageKeys.POPULARITY_MIN_VALUE_EXCEEDED,
+  })
   @ApiProperty({
     type: Number,
     example: 73.545,
@@ -76,9 +92,16 @@ export class CreateMovieDto {
   popularity!: number;
 
   @IsNotEmpty({ message: BadRequestExceptionMessageKeys.PROVIDE_VOTE_AVERAGE })
-  @IsNumber({ maxDecimalPlaces: 2 }, { message: BadRequestExceptionMessageKeys.PROVIDE_NUMBER })
-  @Max(10.0, { message: BadRequestExceptionMessageKeys.VOTE_AVERAGE_MAX_VALUE_EXCEEDED })
-  @Min(0.0, { message: BadRequestExceptionMessageKeys.VOTE_AVERAGE_MIN_VALUE_EXCEEDED })
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    { message: BadRequestExceptionMessageKeys.PROVIDE_NUMBER },
+  )
+  @Max(10.0, {
+    message: BadRequestExceptionMessageKeys.VOTE_AVERAGE_MAX_VALUE_EXCEEDED,
+  })
+  @Min(0.0, {
+    message: BadRequestExceptionMessageKeys.VOTE_AVERAGE_MIN_VALUE_EXCEEDED,
+  })
   @ApiProperty({
     type: Number,
     example: 8.4,
@@ -87,7 +110,10 @@ export class CreateMovieDto {
   voteAverage!: number;
 
   @IsNotEmpty({ message: BadRequestExceptionMessageKeys.PROVIDE_VOTE_COUNT })
-  @IsNumber({ maxDecimalPlaces: 2 }, { message: BadRequestExceptionMessageKeys.PROVIDE_NUMBER })
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    { message: BadRequestExceptionMessageKeys.PROVIDE_NUMBER },
+  )
   @ApiProperty({
     type: Number,
     example: 1500,
@@ -96,7 +122,9 @@ export class CreateMovieDto {
   voteCount!: number;
 
   @IsNotEmpty({ message: BadRequestExceptionMessageKeys.PROVIDE_RELEASE_DATE })
-  @IsDateString(undefined, { message: BadRequestExceptionMessageKeys.INVALID_DATE_PROVIDED })
+  @IsDateString(undefined, {
+    message: BadRequestExceptionMessageKeys.INVALID_DATE_PROVIDED,
+  })
   @ApiProperty({
     type: String,
     required: true,
@@ -107,7 +135,10 @@ export class CreateMovieDto {
   @IsNotEmpty({ message: BadRequestExceptionMessageKeys.PROVIDE_GENRES })
   @IsArray({ message: BadRequestExceptionMessageKeys.PROVIDE_ARRAY })
   @Type(() => GenreDto)
-  @ValidateNested({ each: true, message: BadRequestExceptionMessageKeys.PROVIDE_VALID_GENRE_OBJECTS })
+  @ValidateNested({
+    each: true,
+    message: BadRequestExceptionMessageKeys.PROVIDE_VALID_GENRE_OBJECTS,
+  })
   @ApiProperty({
     description: "An array of genres.",
     type: [GenreDto],

@@ -14,7 +14,7 @@ export class LoggerService implements Logger {
   public constructor(
     @Inject(LoggerBaseKey) private logger: WinstonLogger,
     configService: ConfigService,
-    @Inject(INQUIRER) parentClass: object
+    @Inject(INQUIRER) parentClass: object,
   ) {
     // Set the source class from the parent class
     this.sourceClass = parentClass?.constructor?.name;
@@ -43,7 +43,12 @@ export class LoggerService implements Logger {
    * @param data
    * @param profile
    */
-  public log(level: LogLevel, message: string | Error, data?: LogData, profile?: string) {
+  public log(
+    level: LogLevel,
+    message: string | Error,
+    data?: LogData,
+    profile?: string,
+  ) {
     return this.logger.log(level, message, this.getLogData(data), profile);
   }
 

@@ -16,7 +16,9 @@ export class OrderDto {
 
   @ValidateIf((dto: OrderDto) => dto.field !== null && dto.field !== undefined)
   @IsString()
-  @IsIn(["asc", "desc"], { message: FilterCustomValidationMessageKeys.PROVIDE_VALID_ORDER_TYPE })
+  @IsIn(["asc", "desc"], {
+    message: FilterCustomValidationMessageKeys.PROVIDE_VALID_ORDER_TYPE,
+  })
   @ApiProperty({
     description: "Order type",
     enum: ["asc", "desc"],

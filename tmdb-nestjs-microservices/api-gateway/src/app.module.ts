@@ -1,6 +1,11 @@
 import { Logger } from "@apollo/utils.logger";
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
-import { Inject, MiddlewareConsumer, Module, Logger as NestLogger } from "@nestjs/common";
+import {
+  Inject,
+  MiddlewareConsumer,
+  Module,
+  Logger as NestLogger,
+} from "@nestjs/common";
 import { GraphQLModule } from "@nestjs/graphql";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 import { ThrottlerModule } from "@nestjs/throttler";
@@ -36,7 +41,12 @@ import { Partitioners } from "kafkajs";
                 producer: { createPartitioner: Partitioners.LegacyPartitioner },
                 client: {
                   clientId: "api-gateway-movie",
-                  brokers: [configService.getOrThrow<string>("KAFKA_BROKER", "kafka:29092")],
+                  brokers: [
+                    configService.getOrThrow<string>(
+                      "KAFKA_BROKER",
+                      "kafka:29092",
+                    ),
+                  ],
                 },
                 consumer: {
                   groupId: "api-gateway-movie-consumer",
@@ -56,7 +66,12 @@ import { Partitioners } from "kafkajs";
                 producer: { createPartitioner: Partitioners.LegacyPartitioner },
                 client: {
                   clientId: "api-gateway-tmdb-api",
-                  brokers: [configService.getOrThrow<string>("KAFKA_BROKER", "kafka:29092")],
+                  brokers: [
+                    configService.getOrThrow<string>(
+                      "KAFKA_BROKER",
+                      "kafka:29092",
+                    ),
+                  ],
                 },
                 consumer: {
                   groupId: "api-gateway-tmdb-api-consumer",
@@ -118,7 +133,7 @@ import { Partitioners } from "kafkajs";
 export class AppModule {
   public constructor(
     private configService: ConfigService,
-    @Inject(LoggerKey) private logger: LoggerService
+    @Inject(LoggerKey) private logger: LoggerService,
   ) {}
 
   configure(consumer: MiddlewareConsumer) {
@@ -139,7 +154,7 @@ export class AppModule {
               });
             },
           },
-        })
+        }),
       )
       .forRoutes("*");
   }

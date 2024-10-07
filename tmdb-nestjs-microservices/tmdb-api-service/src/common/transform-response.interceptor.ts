@@ -13,7 +13,9 @@ import { catchError, map } from "rxjs/operators";
 import { KafkaContext, RpcException } from "@nestjs/microservices";
 import { ClassTransformOptions, plainToClass } from "class-transformer";
 
-export type SerializedResponse = (PlainLiteralObject | object) | (PlainLiteralObject | object)[];
+export type SerializedResponse =
+  | (PlainLiteralObject | object)
+  | (PlainLiteralObject | object)[];
 
 /**
  * A class serializer interceptor that converts plain objects to class instances.
@@ -21,13 +23,20 @@ export type SerializedResponse = (PlainLiteralObject | object) | (PlainLiteralOb
  * @param classToIntercept The class to convert the plain object to.
  * @returns {ClassSerializerInterceptor} The class serializer interceptor.
  */
-export function CustomClassSerializerInterceptor(classToIntercept: Type): typeof ClassSerializerInterceptor {
+export function CustomClassSerializerInterceptor(
+  classToIntercept: Type,
+): typeof ClassSerializerInterceptor {
   return class Interceptor extends ClassSerializerInterceptor {
     private changePlainObjectToClass(document: PlainLiteralObject) {
-      return plainToClass(classToIntercept, JSON.parse(JSON.stringify(document)));
+      return plainToClass(
+        classToIntercept,
+        JSON.parse(JSON.stringify(document)),
+      );
     }
 
-    private prepareResponse(response: PlainLiteralObject | PlainLiteralObject[]) {
+    private prepareResponse(
+      response: PlainLiteralObject | PlainLiteralObject[],
+    ) {
       if (Array.isArray(response)) {
         return response.map(this.changePlainObjectToClass);
       }
@@ -35,17 +44,25 @@ export function CustomClassSerializerInterceptor(classToIntercept: Type): typeof
       return this.changePlainObjectToClass(response);
     }
 
-    serialize(response: PlainLiteralObject | PlainLiteralObject[], options: ClassTransformOptions) {
+    serialize(
+      response: PlainLiteralObject | PlainLiteralObject[],
+      options: ClassTransformOptions,
+    ) {
       return super.serialize(this.prepareResponse(response), options);
     }
   };
 }
 
-export function TransformResponseInterceptor(classToSerialize: Type): typeof ClassSerializerInterceptor {
+export function TransformResponseInterceptor(
+  classToSerialize: Type,
+): typeof ClassSerializerInterceptor {
   const CustomSerializer = CustomClassSerializerInterceptor(classToSerialize);
 
   return class TransformInterceptor extends CustomSerializer {
-    intercept(context: ExecutionContext, next: CallHandler): Observable<SerializedResponse | object | string | null> {
+    intercept(
+      context: ExecutionContext,
+      next: CallHandler,
+    ): Observable<SerializedResponse | object | string | null> {
       const response = context.switchToRpc().getContext<KafkaContext>();
 
       return next.handle().pipe(
@@ -74,7 +91,7 @@ export function TransformResponseInterceptor(classToSerialize: Type): typeof Cla
           const serializedData = this.serialize(data, this.defaultOptions);
 
           return serializedData;
-        })
+        }),
       );
     }
   };

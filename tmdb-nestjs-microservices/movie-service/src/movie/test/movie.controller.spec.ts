@@ -23,14 +23,25 @@ describe("MovieController", () => {
   let service: MovieService;
 
   const mockCreateMovieDto: CreateMovieDto = makeMockCreateMovieDto();
-  const mockMovieData: Movie = { ...mockCreateMovieDto, _id: new Types.ObjectId() };
+  const mockMovieData: Movie = {
+    ...mockCreateMovieDto,
+    _id: new Types.ObjectId(),
+  };
 
   beforeEach(async () => {
     const modelMock: MockModel = {
       create: jest.fn(),
-      find: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue([mockMovieData]) }),
-      findOne: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue(mockMovieData) }),
-      findOneAndDelete: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue(null) }),
+      find: jest
+        .fn()
+        .mockReturnValue({
+          exec: jest.fn().mockResolvedValue([mockMovieData]),
+        }),
+      findOne: jest
+        .fn()
+        .mockReturnValue({ exec: jest.fn().mockResolvedValue(mockMovieData) }),
+      findOneAndDelete: jest
+        .fn()
+        .mockReturnValue({ exec: jest.fn().mockResolvedValue(null) }),
       save: jest.fn().mockReturnValue(mockMovieData),
     };
 

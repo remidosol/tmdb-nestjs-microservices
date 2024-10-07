@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import {
   BadRequestExceptionMessageKeys,
   BadRequestExceptionMessages,
@@ -17,7 +22,7 @@ import { Movie } from "./schemas";
 export class MovieService {
   constructor(
     private movieRepository: MovieRepository,
-    @Inject(LoggerKey) private logger: LoggerService
+    @Inject(LoggerKey) private logger: LoggerService,
   ) {
     this.logger.setOrganizationAndContext(MovieService.name);
   }
@@ -31,7 +36,9 @@ export class MovieService {
     try {
       if (order && Object.keys(order).length > 1) {
         this.logger.info(BadRequestExceptionMessages.SPECIFY_ONE_ORDER_FACTOR);
-        throw new BadRequestException(BadRequestExceptionMessageKeys.SPECIFY_ONE_ORDER_FACTOR);
+        throw new BadRequestException(
+          BadRequestExceptionMessageKeys.SPECIFY_ONE_ORDER_FACTOR,
+        );
       }
 
       return this.movieRepository.findAll(order);
@@ -69,7 +76,9 @@ export class MovieService {
 
     if (existingMovie) {
       this.logger.info(BadRequestExceptionMessageKeys.MOVIE_ALREADY_EXISTS);
-      throw new BadRequestException(BadRequestExceptionMessages.MOVIE_ALREADY_EXISTS);
+      throw new BadRequestException(
+        BadRequestExceptionMessages.MOVIE_ALREADY_EXISTS,
+      );
     }
 
     try {
@@ -103,7 +112,9 @@ export class MovieService {
 
       if (!movie) {
         this.logger.info(NotFoundExceptionMessages.MOVIE_NOT_FOUND);
-        throw new NotFoundException(NotFoundExceptionMessageKeys.MOVIE_NOT_FOUND);
+        throw new NotFoundException(
+          NotFoundExceptionMessageKeys.MOVIE_NOT_FOUND,
+        );
       }
 
       await this.movieRepository.removeById(movieId);

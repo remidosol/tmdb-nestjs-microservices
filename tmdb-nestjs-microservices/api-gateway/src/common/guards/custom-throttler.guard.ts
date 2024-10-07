@@ -1,7 +1,11 @@
 import { ExecutionContext, Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "../../config/config.service";
 import { Reflector } from "@nestjs/core";
-import { ThrottlerGuard, ThrottlerModuleOptions, ThrottlerStorage } from "@nestjs/throttler";
+import {
+  ThrottlerGuard,
+  ThrottlerModuleOptions,
+  ThrottlerStorage,
+} from "@nestjs/throttler";
 import { Request } from "express";
 
 @Injectable()
@@ -13,7 +17,7 @@ export class CustomThrottlerGuard extends ThrottlerGuard {
     options: ThrottlerModuleOptions,
     storageService: ThrottlerStorage,
     reflector: Reflector,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
   ) {
     super(options, storageService, reflector);
   }

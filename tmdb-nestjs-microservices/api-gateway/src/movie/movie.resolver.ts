@@ -10,7 +10,7 @@ import { LoggerKey } from "../logger/types";
 export class MovieResolver {
   constructor(
     private readonly movieService: ApiGatewayMovieService,
-    @Inject(LoggerKey) private logger: LoggerService
+    @Inject(LoggerKey) private logger: LoggerService,
   ) {
     this.logger.setOrganizationAndContext(MovieResolver.name);
   }

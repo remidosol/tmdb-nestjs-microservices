@@ -1,18 +1,18 @@
-import { Logger, ValidationPipe } from "@nestjs/common"
-import { NestFactory } from "@nestjs/core"
+import { Logger, ValidationPipe } from "@nestjs/common";
+import { NestFactory } from "@nestjs/core";
 import {
   NestExpressApplication,
   NestExpressBodyParserOptions,
-} from "@nestjs/platform-express"
-import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger"
-import cookieParser from "cookie-parser"
-import helmet from "helmet"
-import responseTime from "response-time"
-import { AppModule } from "./app.module"
-import { ValidationErrorsInterceptor } from "./common/interceptors"
-import { ConfigService } from "./config/config.service"
-import { LoggerService } from "./logger/services"
-import { LoggerKey } from "./logger/types"
+} from "@nestjs/platform-express";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import cookieParser from "cookie-parser";
+import helmet from "helmet";
+import responseTime from "response-time";
+import { AppModule } from "./app.module";
+import { ValidationErrorsInterceptor } from "./common/interceptors";
+import { ConfigService } from "./config/config.service";
+import { LoggerService } from "./logger/services";
+import { LoggerKey } from "./logger/types";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -23,46 +23,45 @@ async function bootstrap() {
       credentials: true,
     },
     rawBody: true,
-  })
+  });
 
-  app.setGlobalPrefix("api")
+  app.setGlobalPrefix("api");
 
-  const configService = app.get(ConfigService)
-  const logger: LoggerService = await app.resolve(LoggerKey)
+  const configService = app.get(ConfigService);
+  const logger: LoggerService = await app.resolve(LoggerKey);
 
-  app.use(responseTime({ digits: 3, header: "X-Response-Time", suffix: true }))
+  app.use(responseTime({ digits: 3, header: "X-Response-Time", suffix: true }));
 
-  app.useGlobalInterceptors(new ValidationErrorsInterceptor())
+  app.useGlobalInterceptors(new ValidationErrorsInterceptor());
   app.use(
     helmet({
       contentSecurityPolicy:
         configService.getOrThrow("NODE_ENV") === "production"
           ? undefined
           : false,
-    })
-  )
-  app.use(cookieParser())
+    }),
+  );
+  app.use(cookieParser());
 
-  app.set("trust proxy", true)
-  app.useBodyParser("json", { limit: "5mb" } as NestExpressBodyParserOptions)
+  app.set("trust proxy", true);
+  app.useBodyParser("json", { limit: "5mb" } as NestExpressBodyParserOptions);
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       transform: true,
-    })
-  )
+    }),
+  );
 
   const mainConf = new DocumentBuilder()
     .setTitle("TMDB NestJS Api Gateway")
     .setDescription(
-      "TMDB NestJS case is an interview case for NestJS. This API is built with NestJS, MongoDB, Swagger, and Docker."
+      `TMDB NestJS case is an interview case for NestJS. This API is built with NestJS, MongoDB, Swagger, and Docker.
+      <hr><a href="https://developers.themoviedb.org/3">TMDB API</a>: The Movie Database (TMDB) API
+      <hr><a href="${`http://${configService.getOrThrow("HOST") + ":" + configService.getOrThrow("PORT")}/graphql`}">GraphQL Playground</a>: GraphQL Playground for the API
+      <hr><a href="${`http://${configService.getOrThrow("HOST") + ":" + 9000}`}">Kafdrop</a>: Kafka UI for the Kafka Cluster
+      `,
     )
     .setVersion("1.0")
-    .setExternalDoc("TMDB API", "https://developers.themoviedb.org/3")
-    .setExternalDoc(
-      "GraphQL Playground",
-      `http://${configService.getOrThrow("HOST") + ":" + configService.getOrThrow("PORT")}/graphql`
-    )
     .addCookieAuth(
       configService.getOrThrow("CSRF_COOKIE_NAME"),
       {
@@ -70,7 +69,7 @@ async function bootstrap() {
         in: "cookie",
         name: configService.getOrThrow("CSRF_COOKIE_NAME"),
       },
-      configService.getOrThrow("CSRF_COOKIE_NAME")
+      configService.getOrThrow("CSRF_COOKIE_NAME"),
     )
     .addApiKey(
       {
@@ -79,19 +78,19 @@ async function bootstrap() {
         description: "CSRF Header",
         name: configService.getOrThrow("CSRF_HEADER_NAME"),
       },
-      configService.getOrThrow("CSRF_HEADER_NAME")
+      configService.getOrThrow("CSRF_HEADER_NAME"),
     )
-    .build()
+    .build();
 
-  const mainDocument = SwaggerModule.createDocument(app, { ...mainConf })
+  const mainDocument = SwaggerModule.createDocument(app, { ...mainConf });
 
-  SwaggerModule.setup("api", app, mainDocument)
+  SwaggerModule.setup("api", app, mainDocument);
 
-  await app.listen(+configService.getOrThrow("PORT"))
+  await app.listen(+configService.getOrThrow("PORT"));
 
   logger.info(
-    `Application is running on: http://${configService.getOrThrow("HOST") + ":" + configService.getOrThrow("PORT")}`
-  )
+    `Application is running on: http://${configService.getOrThrow("HOST") + ":" + configService.getOrThrow("PORT")}`,
+  );
 
   logger.info(
     `Swagger is running on: http://${
@@ -99,8 +98,8 @@ async function bootstrap() {
       ":" +
       configService.getOrThrow("PORT") +
       "/api"
-    }`
-  )
+    }`,
+  );
 
   logger.info(
     `GraphQL Playground is running on: http://${
@@ -108,11 +107,17 @@ async function bootstrap() {
       ":" +
       configService.getOrThrow("PORT") +
       "/graphql"
-    }`
-  )
+    }`,
+  );
+
+  logger.info(
+    `Kafdrop is running on: http://${
+      configService.getOrThrow("HOST") + ":9000"
+    }`,
+  );
 }
 
 bootstrap().catch((error) => {
-  new Logger("API_GATEWAY").error(error.message, error)
-  process.exit(1)
-})
+  new Logger("API_GATEWAY").error(error.message, error);
+  process.exit(1);
+});

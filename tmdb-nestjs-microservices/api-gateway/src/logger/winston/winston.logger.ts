@@ -2,7 +2,13 @@ import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import * as winston from "winston";
 import { ConfigService } from "../../config/config.service";
 import { LoggerService } from "../services";
-import { LogData, LogLevel, Logger, LoggerKey, WinstonTransportObject } from "../types";
+import {
+  LogData,
+  LogLevel,
+  Logger,
+  LoggerKey,
+  WinstonTransportObject,
+} from "../types";
 
 export const WinstonLoggerTransportsKey = Symbol();
 
@@ -12,12 +18,16 @@ export class WinstonLogger implements Logger {
   private syslogLoggers: { logger: winston.Logger }[];
 
   public constructor(
-    @Inject(WinstonLoggerTransportsKey) private transports: WinstonTransportObject,
+    @Inject(WinstonLoggerTransportsKey)
+    private transports: WinstonTransportObject,
     private readonly configService: ConfigService,
-    @Inject(forwardRef(() => LoggerKey)) private readonly loggerService: LoggerService
+    @Inject(forwardRef(() => LoggerKey))
+    private readonly loggerService: LoggerService,
   ) {
     // Create winston logger
-    this.logger = winston.createLogger(this.getLoggerFormatOptions([...transports.transports]));
+    this.logger = winston.createLogger(
+      this.getLoggerFormatOptions([...transports.transports]),
+    );
     this.syslogLoggers = [];
     loggerService.setOrganizationAndContext(WinstonLogger.name);
 
@@ -69,7 +79,12 @@ export class WinstonLogger implements Logger {
     }
     * ```
    */
-  public log(level: LogLevel, message: string | Error, data?: LogData, profile?: string) {
+  public log(
+    level: LogLevel,
+    message: string | Error,
+    data?: LogData,
+    profile?: string,
+  ) {
     try {
       const logData = {
         level,
@@ -190,7 +205,11 @@ export class WinstonLogger implements Logger {
    * @param data
    * @param profile
    */
-  public async error(message: string | Error, data?: LogData, profile?: string) {
+  public async error(
+    message: string | Error,
+    data?: LogData,
+    profile?: string,
+  ) {
     this.log(LogLevel.Error, message, data, profile);
   }
 
@@ -201,7 +220,11 @@ export class WinstonLogger implements Logger {
    * @param data
    * @param profile
    */
-  public async fatal(message: string | Error, data?: LogData, profile?: string) {
+  public async fatal(
+    message: string | Error,
+    data?: LogData,
+    profile?: string,
+  ) {
     this.log(LogLevel.Fatal, message, data, profile);
   }
 
@@ -212,7 +235,11 @@ export class WinstonLogger implements Logger {
    * @param data
    * @param profile
    */
-  public async emergency(message: string | Error, data?: LogData, profile?: string) {
+  public async emergency(
+    message: string | Error,
+    data?: LogData,
+    profile?: string,
+  ) {
     this.log(LogLevel.Emergency, message, data, profile);
   }
 
@@ -231,7 +258,9 @@ export class WinstonLogger implements Logger {
    * @param transports
    * @returns
    */
-  private getLoggerFormatOptions(transports: winston.transport[]): winston.LoggerOptions {
+  private getLoggerFormatOptions(
+    transports: winston.transport[],
+  ): winston.LoggerOptions {
     // Setting log levels for winston
     const levels: any = {};
     let cont = 0;
@@ -268,7 +297,7 @@ export class WinstonLogger implements Logger {
           fillExcept: ["timestamp", "level", "message"],
         }),
         // Format the log as JSON
-        winston.format.json()
+        winston.format.json(),
       ),
       transports,
       exceptionHandlers: transports,

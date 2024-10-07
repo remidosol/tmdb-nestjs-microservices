@@ -6,7 +6,10 @@ import NestjsLoggerServiceAdapter from "./logger.adapter";
 import { LoggerService } from "./services";
 import { LoggerBaseKey, LoggerKey, WinstonTransportObject } from "./types";
 import { ConsoleTransport } from "./winston/transports";
-import { WinstonLogger, WinstonLoggerTransportsKey } from "./winston/winston.logger";
+import {
+  WinstonLogger,
+  WinstonLoggerTransportsKey,
+} from "./winston/winston.logger";
 
 @Module({
   providers: [
@@ -20,12 +23,15 @@ import { WinstonLogger, WinstonLoggerTransportsKey } from "./winston/winston.log
     },
     {
       provide: NestjsLoggerServiceAdapter,
-      useFactory: (logger: LoggerService) => new NestjsLoggerServiceAdapter(logger),
+      useFactory: (logger: LoggerService) =>
+        new NestjsLoggerServiceAdapter(logger),
       inject: [LoggerKey],
     },
     {
       provide: WinstonLoggerTransportsKey,
-      useFactory: async (configService: ConfigService): Promise<WinstonTransportObject> => {
+      useFactory: async (
+        configService: ConfigService,
+      ): Promise<WinstonTransportObject> => {
         const transports = [];
 
         transports.push(ConsoleTransport.createColorize());

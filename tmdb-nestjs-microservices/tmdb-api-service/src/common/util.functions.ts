@@ -17,12 +17,19 @@ import { LoggerService } from "../logger/services";
  * @param as
  * @returns
  */
-export function isKeyPresentAs<TKey extends string, TAs extends "string" | "number" | "boolean">(
+export function isKeyPresentAs<
+  TKey extends string,
+  TAs extends "string" | "number" | "boolean",
+>(
   object: unknown,
   key: TKey,
-  as: TAs
+  as: TAs,
 ): object is typeof object & {
-  [key in TKey]: TAs extends "string" ? string : TAs extends "number" ? number : boolean;
+  [key in TKey]: TAs extends "string"
+    ? string
+    : TAs extends "number"
+      ? number
+      : boolean;
 } {
   return (
     typeof object === "object" &&
@@ -40,8 +47,13 @@ export function isKeyPresentAs<TKey extends string, TAs extends "string" | "numb
  * @returns HttpException
  */
 export function catchError(err: any, logger: LoggerService): HttpException {
-  if (isKeyPresentAs(err, "status", "number") && isKeyPresentAs(err, "message", "string")) {
-    err.status >= 400 && err.status < 500 ? logger.info?.(err.message) : logger.error(err.message);
+  if (
+    isKeyPresentAs(err, "status", "number") &&
+    isKeyPresentAs(err, "message", "string")
+  ) {
+    err.status >= 400 && err.status < 500
+      ? logger.info?.(err.message)
+      : logger.error(err.message);
     return getHttpException(err.status, err.message);
   } else {
     logger.error(err.message, { error: err });
@@ -55,7 +67,10 @@ export function catchError(err: any, logger: LoggerService): HttpException {
  * @param statusCode
  * @returns
  */
-export function getHttpException(statusCode: number, messageOrCustomData?: string | object): HttpException {
+export function getHttpException(
+  statusCode: number,
+  messageOrCustomData?: string | object,
+): HttpException {
   switch (statusCode) {
     case 400:
       return new BadRequestException(messageOrCustomData);

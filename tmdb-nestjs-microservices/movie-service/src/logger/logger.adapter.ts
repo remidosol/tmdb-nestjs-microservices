@@ -3,7 +3,10 @@ import { LoggerService as CustomLoggerService } from "./services";
 // import { Logger } from "./types";
 
 @Injectable()
-export default class NestjsLoggerServiceAdapter extends ConsoleLogger implements LoggerService {
+export default class NestjsLoggerServiceAdapter
+  extends ConsoleLogger
+  implements LoggerService
+{
   public constructor(private logger: CustomLoggerService) {
     super();
   }

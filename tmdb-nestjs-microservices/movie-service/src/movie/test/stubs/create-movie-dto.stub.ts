@@ -21,7 +21,10 @@ export const makeMockCreateMovieDto = (): CreateMovieDto => {
     popularity: faker.number.float({ min: 0, max: 100, fractionDigits: 3 }),
     voteAverage: faker.number.float({ min: 0, max: 10, fractionDigits: 1 }),
     voteCount: faker.number.int({ min: 0, max: 100000 }),
-    releaseDate: faker.date.between({ from: "1931-01-01", to: "2024-05-11" }).toISOString().split("T")[0],
+    releaseDate: faker.date
+      .between({ from: "1931-01-01", to: "2024-05-11" })
+      .toISOString()
+      .split("T")[0],
     genres,
   };
 };

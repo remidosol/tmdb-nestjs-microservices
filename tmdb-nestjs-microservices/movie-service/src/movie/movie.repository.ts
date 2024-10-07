@@ -6,7 +6,9 @@ import { OrderQuery } from "../common/filter";
 
 @Injectable()
 export class MovieRepository {
-  constructor(@InjectModel(Movie.name) private MovieModel: Model<MovieDocument>) {}
+  constructor(
+    @InjectModel(Movie.name) private MovieModel: Model<MovieDocument>,
+  ) {}
 
   async save(receivedMovie: Movie): Promise<Movie> {
     const movie = await this.MovieModel.create(receivedMovie);

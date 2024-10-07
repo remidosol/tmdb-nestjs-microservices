@@ -1,8 +1,19 @@
-import { Deserializer, IncomingRequest, OutgoingRequest, Serializer } from "@nestjs/microservices";
-import { KafkaRequestSerializer, KafkaRequest } from "@nestjs/microservices/serializers";
+import {
+  Deserializer,
+  IncomingRequest,
+  OutgoingRequest,
+  Serializer,
+} from "@nestjs/microservices";
+import {
+  KafkaRequestSerializer,
+  KafkaRequest,
+} from "@nestjs/microservices/serializers";
 import { KafkaRequestDeserializer } from "@nestjs/microservices/deserializers";
 import { KafkaHeaders } from "@nestjs/microservices/enums";
-import { KafkaMessage, IHeaders } from "@nestjs/microservices/external/kafka.interface";
+import {
+  KafkaMessage,
+  IHeaders,
+} from "@nestjs/microservices/external/kafka.interface";
 import { v4 as uuidv4 } from "uuid";
 import { LoggerService } from "../logger/services";
 import { catchError } from "./util.functions";
@@ -79,7 +90,9 @@ export class JsonAndStringDeserializer extends KafkaRequestDeserializer {
     try {
       return {
         id: value.headers[KafkaHeaders.CORRELATION_ID] as string,
-        pattern: value.topic.includes(".") ? value.topic.split(".")[1] : value.topic,
+        pattern: value.topic.includes(".")
+          ? value.topic.split(".")[1]
+          : value.topic,
         data: value.value,
       };
     } catch (error) {

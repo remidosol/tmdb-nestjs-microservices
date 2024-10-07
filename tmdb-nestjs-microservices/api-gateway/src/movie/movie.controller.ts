@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Query, UseGuards, UseInterceptors } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Inject,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+  UseInterceptors,
+} from "@nestjs/common";
 import {
   ApiBadRequestResponse,
   ApiCookieAuth,
@@ -30,7 +41,7 @@ import { Movie } from "./movie.types";
 export class ApiGatewayMovieController {
   constructor(
     private readonly movieService: ApiGatewayMovieService,
-    @Inject(LoggerKey) private logger: LoggerService
+    @Inject(LoggerKey) private logger: LoggerService,
   ) {
     this.logger.setOrganizationAndContext(ApiGatewayMovieController.name);
   }
@@ -48,7 +59,9 @@ export class ApiGatewayMovieController {
   @ApiParam({ name: "movieId", example: "55" })
   @ApiResponse(commonResponse)
   @UseInterceptors(TransformResponseInterceptor(Movie))
-  findMovie(@Param("movieId") movieId: string): Observable<Movie | string | null> {
+  findMovie(
+    @Param("movieId") movieId: string,
+  ): Observable<Movie | string | null> {
     return this.movieService.findMovie(movieId);
   }
 
@@ -68,7 +81,9 @@ export class ApiGatewayMovieController {
     example: "55",
   })
   @UseInterceptors(TransformResponseInterceptor(Movie))
-  deleteMovie(@Param("movieId") movieId: string): Observable<Movie | string | null> {
+  deleteMovie(
+    @Param("movieId") movieId: string,
+  ): Observable<Movie | string | null> {
     return this.movieService.deleteMovie(movieId);
   }
 }

@@ -12,7 +12,7 @@ export class AppService {
   constructor(
     private readonly configService: ConfigService,
     private readonly movieService: ApiGatewayMovieService,
-    private readonly tmdbApiService: ApiGatewayTmdbApiService
+    private readonly tmdbApiService: ApiGatewayTmdbApiService,
   ) {}
 
   /**
@@ -48,7 +48,7 @@ export class AppService {
         "vote_count.gte": "1500",
         watch_region: "TR",
         with_watch_providers: "8",
-      })
+      }),
     );
 
     if (!data || !data.results || data.results.length === 0) {
@@ -58,7 +58,9 @@ export class AppService {
     const dataToBeFetched = data.results.slice(0, 5);
 
     for (const movie of dataToBeFetched) {
-      const movieDetail = await firstValueFrom(this.tmdbApiService.getMovieDetails(`${movie.id}`));
+      const movieDetail = await firstValueFrom(
+        this.tmdbApiService.getMovieDetails(`${movie.id}`),
+      );
 
       if (!movieDetail) {
         continue;
@@ -72,9 +74,12 @@ export class AppService {
           releaseDate: movieDetail.release_date,
           voteAverage: movieDetail.vote_average,
           voteCount: movieDetail.vote_count,
-          genres: movieDetail.genres.map((genre: any) => ({ id: genre.id, name: genre.name })),
+          genres: movieDetail.genres.map((genre: any) => ({
+            id: genre.id,
+            name: genre.name,
+          })),
           popularity: movieDetail.popularity,
-        })
+        }),
       );
 
       if (!createdMovie) {

@@ -1,7 +1,13 @@
 /************************************************************************************/
 /************************************************************************************/
 
-import { BelongsToCollection, Genre, ProductionCompany, ProductionCountry, SpokenLanguage } from "./tmdb-common.types";
+import {
+  BelongsToCollection,
+  Genre,
+  ProductionCompany,
+  ProductionCountry,
+  SpokenLanguage,
+} from "./tmdb-common.types";
 
 export type DiscoverMovieResult = {
   adult?: boolean;

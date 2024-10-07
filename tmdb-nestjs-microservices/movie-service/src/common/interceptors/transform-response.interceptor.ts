@@ -13,13 +13,21 @@ import { catchError, map } from "rxjs/operators";
 import { MongooseClassSerializerInterceptor } from "../mongo/mongoose.serializer";
 import { KafkaContext, RpcException } from "@nestjs/microservices";
 
-export type SerializedResponse = (PlainLiteralObject | object) | (PlainLiteralObject | object)[];
+export type SerializedResponse =
+  | (PlainLiteralObject | object)
+  | (PlainLiteralObject | object)[];
 
-export function TransformResponseInterceptor(classToSerialize: Type): typeof ClassSerializerInterceptor {
-  const MongooseSerializer = MongooseClassSerializerInterceptor(classToSerialize);
+export function TransformResponseInterceptor(
+  classToSerialize: Type,
+): typeof ClassSerializerInterceptor {
+  const MongooseSerializer =
+    MongooseClassSerializerInterceptor(classToSerialize);
 
   return class TransformInterceptor extends MongooseSerializer {
-    intercept(context: ExecutionContext, next: CallHandler): Observable<SerializedResponse | object | string | null> {
+    intercept(
+      context: ExecutionContext,
+      next: CallHandler,
+    ): Observable<SerializedResponse | object | string | null> {
       const response = context.switchToRpc().getContext<KafkaContext>();
       // console.log(context.getType());
       // console.log(response.getMessage());
@@ -55,7 +63,7 @@ export function TransformResponseInterceptor(classToSerialize: Type): typeof Cla
           const serializedData = this.serialize(data, this.defaultOptions);
 
           return serializedData;
-        })
+        }),
       );
     }
   };

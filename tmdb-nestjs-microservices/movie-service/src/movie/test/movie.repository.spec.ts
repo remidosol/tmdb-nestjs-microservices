@@ -21,9 +21,17 @@ describe("MovieRepository", () => {
   beforeEach(async () => {
     const modelMock: MockModel = {
       create: jest.fn(),
-      find: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue([mockMovieData]) }),
-      findOne: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue(mockMovieData) }),
-      findOneAndDelete: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue(null) }),
+      find: jest
+        .fn()
+        .mockReturnValue({
+          exec: jest.fn().mockResolvedValue([mockMovieData]),
+        }),
+      findOne: jest
+        .fn()
+        .mockReturnValue({ exec: jest.fn().mockResolvedValue(mockMovieData) }),
+      findOneAndDelete: jest
+        .fn()
+        .mockReturnValue({ exec: jest.fn().mockResolvedValue(null) }),
       save: jest.fn().mockReturnValue(mockMovieData),
     };
 
@@ -49,7 +57,9 @@ describe("MovieRepository", () => {
     it("should successfully insert a movie", async () => {
       jest
         .spyOn(mockModel, "create")
-        .mockImplementation(() => Promise.resolve({ save: jest.fn().mockResolvedValue(mockMovieData) }));
+        .mockImplementation(() =>
+          Promise.resolve({ save: jest.fn().mockResolvedValue(mockMovieData) }),
+        );
 
       const result = await repository.save(mockMovieData);
       expect(mockModel.create).toHaveBeenCalledWith(mockMovieData);
@@ -60,7 +70,11 @@ describe("MovieRepository", () => {
 
   describe("findAll", () => {
     it("should return an array of movies", async () => {
-      jest.spyOn(mockModel, "find").mockReturnValue({ exec: jest.fn().mockResolvedValue([mockMovieData]) });
+      jest
+        .spyOn(mockModel, "find")
+        .mockReturnValue({
+          exec: jest.fn().mockResolvedValue([mockMovieData]),
+        });
 
       const result = await repository.findAll();
 
@@ -101,7 +115,9 @@ describe("MovieRepository", () => {
 
       await repository.removeById(mockMovieData.id);
 
-      expect(mockModel.findOneAndDelete).toHaveBeenCalledWith({ id: mockMovieData.id });
+      expect(mockModel.findOneAndDelete).toHaveBeenCalledWith({
+        id: mockMovieData.id,
+      });
     });
 
     it("should not throw an error if the movie ID does not exist", async () => {
@@ -113,7 +129,9 @@ describe("MovieRepository", () => {
 
       await expect(repository.removeById(nonExistentId)).resolves.not.toThrow();
 
-      expect(mockModel.findOneAndDelete).toHaveBeenCalledWith({ id: nonExistentId });
+      expect(mockModel.findOneAndDelete).toHaveBeenCalledWith({
+        id: nonExistentId,
+      });
     });
   });
 });

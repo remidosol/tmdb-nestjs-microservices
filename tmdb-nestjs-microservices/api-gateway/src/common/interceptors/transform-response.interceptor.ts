@@ -1,4 +1,10 @@
-import { CallHandler, ClassSerializerInterceptor, ExecutionContext, PlainLiteralObject, Type } from "@nestjs/common";
+import {
+  CallHandler,
+  ClassSerializerInterceptor,
+  ExecutionContext,
+  PlainLiteralObject,
+  Type,
+} from "@nestjs/common";
 import { ClassTransformOptions, plainToClass } from "class-transformer";
 import { Response } from "express";
 import { Observable } from "rxjs";
@@ -15,13 +21,20 @@ export interface SerializedResponse {
  * @param classToIntercept The class to convert the plain object to.
  * @returns {ClassSerializerInterceptor} The class serializer interceptor.
  */
-export function CustomClassSerializerInterceptor(classToIntercept: Type): typeof ClassSerializerInterceptor {
+export function CustomClassSerializerInterceptor(
+  classToIntercept: Type,
+): typeof ClassSerializerInterceptor {
   return class Interceptor extends ClassSerializerInterceptor {
     private changePlainObjectToClass(document: PlainLiteralObject) {
-      return plainToClass(classToIntercept, JSON.parse(JSON.stringify(document)));
+      return plainToClass(
+        classToIntercept,
+        JSON.parse(JSON.stringify(document)),
+      );
     }
 
-    private prepareResponse(response: PlainLiteralObject | PlainLiteralObject[]) {
+    private prepareResponse(
+      response: PlainLiteralObject | PlainLiteralObject[],
+    ) {
       if (Array.isArray(response)) {
         return response.map(this.changePlainObjectToClass);
       }
@@ -29,18 +42,28 @@ export function CustomClassSerializerInterceptor(classToIntercept: Type): typeof
       return this.changePlainObjectToClass(response);
     }
 
-    serialize(response: PlainLiteralObject | PlainLiteralObject[], options: ClassTransformOptions) {
+    serialize(
+      response: PlainLiteralObject | PlainLiteralObject[],
+      options: ClassTransformOptions,
+    ) {
       return super.serialize(this.prepareResponse(response), options);
     }
   };
 }
 
-export function TransformResponseInterceptor(classToSerialize: Type): typeof ClassSerializerInterceptor {
+export function TransformResponseInterceptor(
+  classToSerialize: Type,
+): typeof ClassSerializerInterceptor {
   const CustomSerializer = CustomClassSerializerInterceptor(classToSerialize);
 
   return class TransformInterceptor extends CustomSerializer {
-    intercept(context: ExecutionContext, next: CallHandler): Observable<SerializedResponse | object> {
-      const response = context.switchToHttp().getResponse<Response<typeof classToSerialize>>();
+    intercept(
+      context: ExecutionContext,
+      next: CallHandler,
+    ): Observable<SerializedResponse | object> {
+      const response = context
+        .switchToHttp()
+        .getResponse<Response<typeof classToSerialize>>();
 
       return next.handle().pipe(
         map((data) => {
@@ -87,7 +110,7 @@ export function TransformResponseInterceptor(classToSerialize: Type): typeof Cla
           };
 
           return responseBody;
-        })
+        }),
       );
     }
   };

@@ -32,7 +32,8 @@ export const NotFoundExceptionMessages = {
 };
 
 export const ForbiddenExceptionMessages = {
-  NO_PERMISSION_TO_ACCESS_RESOURCE: "You don't have permission to access this resource",
+  NO_PERMISSION_TO_ACCESS_RESOURCE:
+    "You don't have permission to access this resource",
 };
 
 export const UnauthorizedExceptionMessages = {

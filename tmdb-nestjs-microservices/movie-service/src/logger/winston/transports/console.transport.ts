@@ -19,15 +19,23 @@ export class ConsoleTransport {
           const color = this.mapLogLevelColor(log.level as LogLevel);
           const prefix = `${log.data.label ? `[${log.data.label}]` : ""}`;
           return `${this.colorize(color, prefix + " -")} ${log.timestamp} ${
-            log.data.correlationId ? `(${this.colorize(LogColors.cyan, log.data.correlationId)})` : ""
+            log.data.correlationId
+              ? `(${this.colorize(LogColors.cyan, log.data.correlationId)})`
+              : ""
           } ${this.colorize(color, log.level.toUpperCase())} ${
-            log.data.sourceClass ? `${this.colorize(LogColors.cyan, `[${log.data.sourceClass}]`)}` : ""
+            log.data.sourceClass
+              ? `${this.colorize(LogColors.cyan, `[${log.data.sourceClass}]`)}`
+              : ""
           } ${this.colorize(color, log.message + " - " + (log.data.error ? log.data.error : ""))}${
-            log.data.durationMs !== undefined ? this.colorize(color, " +" + log.data.durationMs + "ms") : ""
+            log.data.durationMs !== undefined
+              ? this.colorize(color, " +" + log.data.durationMs + "ms")
+              : ""
           }${log.data.stack ? this.colorize(color, `  - ${log.data.stack}`) : ""}${
-            log.data.props ? `\n  - Props: ${JSON.stringify(log.data.props, null, 4)}` : ""
+            log.data.props
+              ? `\n  - Props: ${JSON.stringify(log.data.props, null, 4)}`
+              : ""
           }`;
-        })
+        }),
       ),
     });
   }

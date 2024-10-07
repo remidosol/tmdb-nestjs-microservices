@@ -23,7 +23,7 @@ export const BadRequestExceptionMessages = {
   VOTE_AVERAGE_MIN_VALUE_EXCEEDED: "Vote average min value exceeded!",
   PROVIDE_VOTE_COUNT: "Please provide vote count!",
   PROVIDE_VALID_GENRE_OBJECTS: "Please provide valid genre objects!",
-  MOVIE_ALREADY_EXISTS: "Movie already exists!"
+  MOVIE_ALREADY_EXISTS: "Movie already exists!",
 };
 
 export const NotFoundExceptionMessages = {
@@ -32,7 +32,8 @@ export const NotFoundExceptionMessages = {
 };
 
 export const ForbiddenExceptionMessages = {
-  NO_PERMISSION_TO_ACCESS_RESOURCE: "You don't have permission to access this resource",
+  NO_PERMISSION_TO_ACCESS_RESOURCE:
+    "You don't have permission to access this resource",
 };
 
 export const UnauthorizedExceptionMessages = {

@@ -1,4 +1,9 @@
-import { Inject, Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
+import {
+  Inject,
+  Injectable,
+  OnModuleDestroy,
+  OnModuleInit,
+} from "@nestjs/common";
 import { ClientKafka } from "@nestjs/microservices";
 import { Observable } from "rxjs";
 import { OrderDto } from "../common/filter";
@@ -11,11 +16,16 @@ import { MOVIE_SERVICE } from "./movie.types";
 
 @Injectable()
 export class ApiGatewayMovieService implements OnModuleInit, OnModuleDestroy {
-  protected requestPatterns = ["getMovies", "findMovie", "createMovie", "deleteMovie"];
+  protected requestPatterns = [
+    "getMovies",
+    "findMovie",
+    "createMovie",
+    "deleteMovie",
+  ];
 
   constructor(
     @Inject(MOVIE_SERVICE) private readonly movieKafkaClient: ClientKafka,
-    @Inject(LoggerKey) private logger: LoggerService
+    @Inject(LoggerKey) private logger: LoggerService,
   ) {
     this.logger.setOrganizationAndContext(ApiGatewayMovieService.name);
   }
@@ -41,7 +51,10 @@ export class ApiGatewayMovieService implements OnModuleInit, OnModuleDestroy {
    */
   getMovies(order?: OrderDto): Observable<Movie[]> {
     try {
-      return this.movieKafkaClient.send<Movie[]>("getMovies", JSON.stringify(order));
+      return this.movieKafkaClient.send<Movie[]>(
+        "getMovies",
+        JSON.stringify(order),
+      );
     } catch (err: any) {
       this.logger.error(err);
       throw catchError(err, this.logger);
@@ -71,7 +84,10 @@ export class ApiGatewayMovieService implements OnModuleInit, OnModuleDestroy {
    */
   createMovie(dto: CreateMovieDto): Observable<Movie | null> {
     try {
-      return this.movieKafkaClient.send<Movie | null>("createMovie", JSON.stringify(dto));
+      return this.movieKafkaClient.send<Movie | null>(
+        "createMovie",
+        JSON.stringify(dto),
+      );
     } catch (err: any) {
       this.logger.error(err);
       throw catchError(err, this.logger);

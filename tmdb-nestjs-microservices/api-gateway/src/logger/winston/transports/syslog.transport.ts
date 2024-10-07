@@ -1,7 +1,13 @@
-import { Syslog, SyslogTransportOptions, SyslogTransportInstance } from "winston-syslog";
+import {
+  Syslog,
+  SyslogTransportOptions,
+  SyslogTransportInstance,
+} from "winston-syslog";
 
 export class SysLogTransport {
-  public static create(options: SyslogTransportOptions): SyslogTransportInstance | undefined {
+  public static create(
+    options: SyslogTransportOptions,
+  ): SyslogTransportInstance | undefined {
     const sysLog = new Syslog(options);
 
     try {

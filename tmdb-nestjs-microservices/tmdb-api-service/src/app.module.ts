@@ -13,7 +13,7 @@ import { LoggerKey } from "./logger/types";
 export class AppModule {
   public constructor(
     private configService: ConfigService,
-    @Inject(LoggerKey) private logger: LoggerService
+    @Inject(LoggerKey) private logger: LoggerService,
   ) {}
 
   configure(consumer: MiddlewareConsumer) {
@@ -30,7 +30,7 @@ export class AppModule {
               });
             },
           },
-        })
+        }),
       )
       .forRoutes("*");
   }

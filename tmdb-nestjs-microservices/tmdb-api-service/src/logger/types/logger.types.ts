@@ -6,7 +6,12 @@ export const LoggerBaseKey = Symbol();
 export const LoggerKey = Symbol();
 
 export interface Logger {
-  log(level: LogLevel, message: string | Error, data?: LogData, profile?: string): void;
+  log(
+    level: LogLevel,
+    message: string | Error,
+    data?: LogData,
+    profile?: string,
+  ): void;
   syslog(level: LogLevel, message: string | Error, data?: LogData): void;
   debug(message: string, data?: LogData, profile?: string): void;
   info(message: string, data?: LogData, profile?: string): void;

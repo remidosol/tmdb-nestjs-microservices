@@ -21,14 +21,25 @@ describe("MovieService", () => {
   let movieRepository: MovieRepository;
 
   const mockCreateMovieDto: CreateMovieDto = makeMockCreateMovieDto();
-  const mockMovieData: Movie = { ...mockCreateMovieDto, _id: new Types.ObjectId() };
+  const mockMovieData: Movie = {
+    ...mockCreateMovieDto,
+    _id: new Types.ObjectId(),
+  };
 
   beforeEach(async () => {
     const modelMock: MockModel = {
       create: jest.fn(),
-      find: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue([mockMovieData]) }),
-      findOne: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue(mockMovieData) }),
-      findOneAndDelete: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue(null) }),
+      find: jest
+        .fn()
+        .mockReturnValue({
+          exec: jest.fn().mockResolvedValue([mockMovieData]),
+        }),
+      findOne: jest
+        .fn()
+        .mockReturnValue({ exec: jest.fn().mockResolvedValue(mockMovieData) }),
+      findOneAndDelete: jest
+        .fn()
+        .mockReturnValue({ exec: jest.fn().mockResolvedValue(null) }),
       save: jest.fn().mockReturnValue(mockMovieData),
     };
 
@@ -54,7 +65,9 @@ describe("MovieService", () => {
 
   describe("getMovies", () => {
     it("should return an array of movies", async () => {
-      jest.spyOn(movieRepository, "findAll").mockImplementation(() => Promise.resolve([mockMovieData]));
+      jest
+        .spyOn(movieRepository, "findAll")
+        .mockImplementation(() => Promise.resolve([mockMovieData]));
 
       const result = await service.getMovies();
       expect(result).toEqual([mockMovieData]);
@@ -62,7 +75,9 @@ describe("MovieService", () => {
     });
 
     it("should throw BadRequestException if multiple order keys are provided", async () => {
-      await expect(service.getMovies({ name: 1, voteAverage: -1 })).rejects.toThrow(BadRequestException);
+      await expect(
+        service.getMovies({ name: 1, voteAverage: -1 }),
+      ).rejects.toThrow(BadRequestException);
     });
   });
 
@@ -78,7 +93,9 @@ describe("MovieService", () => {
     it("should return null when movie is not found", async () => {
       const nonExistentId = "999999";
 
-      jest.spyOn(movieRepository, "findById").mockImplementation(() => Promise.resolve(null));
+      jest
+        .spyOn(movieRepository, "findById")
+        .mockImplementation(() => Promise.resolve(null));
       const result = await service.findMovie(nonExistentId);
       expect(result).toBeNull();
     });
@@ -86,18 +103,24 @@ describe("MovieService", () => {
 
   describe("createMovie", () => {
     it("should save a new movie", async () => {
-      jest.spyOn(movieRepository, "save").mockImplementation(() => Promise.resolve(mockMovieData));
+      jest
+        .spyOn(movieRepository, "save")
+        .mockImplementation(() => Promise.resolve(mockMovieData));
 
       const result = await service.createMovie(mockCreateMovieDto);
       expect(result).toEqual(mockMovieData);
-      expect(movieRepository.save).toHaveBeenCalledWith(expect.objectContaining(mockCreateMovieDto));
+      expect(movieRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining(mockCreateMovieDto),
+      );
     });
   });
 
   describe("deleteMovie", () => {
     it("should delete the movie if it exists", async () => {
       jest.spyOn(movieRepository, "findById").mockResolvedValue(mockMovieData);
-      jest.spyOn(movieRepository, "removeById").mockResolvedValue(Promise.resolve());
+      jest
+        .spyOn(movieRepository, "removeById")
+        .mockResolvedValue(Promise.resolve());
 
       const result = await service.deleteMovie(mockMovieData.id);
       expect(result).toEqual(mockMovieData);

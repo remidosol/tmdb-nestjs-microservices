@@ -1,4 +1,9 @@
-import { Global, Injectable, NestMiddleware, UnauthorizedException } from "@nestjs/common";
+import {
+  Global,
+  Injectable,
+  NestMiddleware,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { ConfigService } from "../../config/config.service";
 import { Request, Response } from "express";
 
@@ -8,8 +13,10 @@ export class CsrfMiddleware implements NestMiddleware {
   constructor(private readonly configService: ConfigService) {}
 
   async use(req: Request, res: Response, next: () => void) {
-    const cookieCsrf = req.cookies[this.configService.getOrThrow<string>("CSRF_COOKIE_NAME")];
-    const headerCsrf = req.headers[this.configService.getOrThrow<string>("CSRF_HEADER_NAME")];
+    const cookieCsrf =
+      req.cookies[this.configService.getOrThrow<string>("CSRF_COOKIE_NAME")];
+    const headerCsrf =
+      req.headers[this.configService.getOrThrow<string>("CSRF_HEADER_NAME")];
 
     if (!cookieCsrf && !headerCsrf) {
       throw new UnauthorizedException({
