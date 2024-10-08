@@ -509,7 +509,7 @@ Kafdrop is accessible at `http://localhost:9000`. You can use it to:
 
 ```graphql
 query {
-  getMovie(id: "55") {
+  findMovie(id: "55") {
     id
     name
     overview
